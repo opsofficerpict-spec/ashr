@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduFee Dashboard</title>
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
+body{margin:0;background:#f1f5f9;color:#1e293b}
+.hide{display:none!important}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px #0001;margin-bottom:14px}
+input,select,textarea{width:100%;padding:10px;margin:5px 0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px}
+button{background:#2563eb;color:#fff;border:0;padding:9px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+button.g{background:#16a34a}button.r{background:#dc2626}button.o{background:#f59e0b}button.x{background:#64748b}
+#auth{display:flex;min-height:100vh;background:#fff}
+.brand{flex:1;background:linear-gradient(135deg,#0f172a,#1e3a8a 55%,#0ea5e9);color:#fff;padding:60px;display:flex;flex-direction:column;justify-content:center}
+.brand .logo{font-size:44px;margin-bottom:8px}.brand h1{font-size:40px;margin:0 0 12px}.brand p{font-size:17px;line-height:1.6;opacity:.85;max-width:420px}
+.brand ul{list-style:none;padding:0;margin:24px 0 0;opacity:.9}.brand li{margin:10px 0}
+.panel{flex:1;display:flex;align-items:center;justify-content:center;padding:28px}
+.form{width:100%;max-width:400px}.form h2{font-size:28px;margin:0 0 6px}.form .sub{color:#64748b;margin:0 0 24px}
+.form label{font-size:13px;font-weight:600;color:#475569}
+.form input{padding:12px;border-radius:10px;background:#f8fafc}.form input:focus{outline:2px solid #2563eb;background:#fff}
+.form .main{width:100%;padding:13px;font-size:15px;font-weight:600;border-radius:10px;margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.sw{text-align:center;color:#64748b;margin-top:22px}.sw a{color:#2563eb;font-weight:600;cursor:pointer}
+@media(max-width:800px){#auth{flex-direction:column}.brand{flex:none;padding:28px}.brand ul{display:none}.brand h1{font-size:30px}.grid{grid-template-columns:1fr}}
+header{background:#1e3a8a;color:#fff;display:flex;align-items:center;gap:12px;padding:10px 14px;position:sticky;top:0;z-index:5}
+#burger{background:none;font-size:26px;padding:0 6px}
+#slider{flex:1;overflow:hidden;white-space:nowrap;background:#ffffff22;border-radius:6px;padding:5px}
+#slider span{display:inline-block;padding-left:100%;animation:mv 15s linear infinite;font-weight:bold}
+@keyframes mv{to{transform:translateX(-100%)}}
+#side{position:fixed;top:50px;left:0;bottom:0;width:220px;background:#fff;box-shadow:2px 0 8px #0002;padding:10px;transform:translateX(-100%);transition:.25s;z-index:4}
+#side.open{transform:none}
+#side a{display:block;padding:12px;border-radius:8px;cursor:pointer}#side a:hover,#side a.on{background:#dbeafe}
+main{padding:14px;max-width:900px;margin:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px;border-bottom:1px solid #e2e8f0;text-align:left}
+.st{padding:2px 8px;border-radius:10px;font-size:12px;color:#fff}.pending{background:#f59e0b}.approved{background:#16a34a}.rejected{background:#dc2626}.incorrect{background:#7c3aed}
+.bal{color:#dc2626;font-weight:bold}.ext{color:#16a34a;font-weight:bold}
+#modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9}
+#modal div{background:#fff;padding:24px;border-radius:14px;max-width:360px;width:90%;text-align:center}
+#modal b{font-size:19px;display:block;margin-bottom:16px}
+#msgs{height:300px;overflow:auto;background:#f8fafc;padding:8px;border-radius:8px;margin-bottom:8px}
+.m{max-width:75%;padding:7px 11px;border-radius:12px;margin:4px 0;background:#e2e8f0;clear:both}
+.m.me{background:#2563eb;color:#fff;float:right}
+.clr{overflow:hidden}
+
+body{background:#f4f6fb;color:#0f172a}
+header{background:#fff;color:#0f172a;box-shadow:0 1px 0 #e5e9f2;padding:12px 22px}
+#burger{color:#0f172a;font-size:24px}#pgT{font-size:18px;min-width:120px}
+#slider{background:#eff6ff;color:#1d4ed8;font-size:14px}
+.usr{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+@media(max-width:600px){#uName{display:none}}
+#side{top:0;width:250px;background:linear-gradient(180deg,#0f172a,#1e3a8a);color:#e2e8f0;padding:20px 14px;box-shadow:none;z-index:20}
+#side .lg{font-size:22px;font-weight:800;color:#fff;padding:6px 10px 22px}
+#side a{color:#cbd5e1;margin-bottom:4px;padding:12px 14px;font-weight:500}
+#side a:hover{background:#ffffff14}#side a.on{background:#ffffff26;color:#fff}
+#app{transition:margin .25s}
+@media(min-width:901px){#app.sb{margin-left:250px}}
+@media(max-width:900px){#side.open{box-shadow:0 0 0 100vmax #0006}}
+main{max-width:1200px;padding:22px}
+.card{border-radius:16px;box-shadow:0 1px 3px #0f172a0d;border:1px solid #e8ecf4}
+button{border-radius:10px;font-weight:600}
+th{color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.hero{background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#06b6d4);color:#fff;border-radius:18px;padding:26px;margin-bottom:18px}
+.hero h2{margin:0 0 6px}.hero p{margin:0;opacity:.85}
+.pb{height:8px;background:#ffffff40;border-radius:8px;margin-top:16px;overflow:hidden}.pb i{display:block;height:100%;background:#fff;border-radius:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid #e8ecf4;border-radius:16px;padding:18px;display:flex;gap:14px;align-items:center;box-shadow:0 1px 3px #0f172a0d}
+.kpi .ic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.kl{color:#64748b;font-size:13px}.kv{font-size:26px;font-weight:800}.kpi small{color:#94a3b8}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.card h4{margin:0 0 12px}.cw{position:relative;height:250px}
+@media(max-width:480px){.charts{grid-template-columns:1fr}}
+
+html,body{height:100%;overflow:hidden}
+#auth{height:100vh;overflow-y:auto}
+#app{height:100vh;display:flex;flex-direction:column}
+header{position:static;flex:none}
+main{flex:1;overflow-y:auto;max-width:none;margin:0;width:100%;padding:20px max(20px,calc((100% - 1200px)/2))}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.pcard{border:1px solid #e8ecf4;border-radius:14px;padding:14px;background:#fff;box-shadow:0 1px 3px #0f172a0d}
+.pcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.rw{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #eef2f7;font-size:14px}.rw span{color:#64748b}
+.sbar{height:6px;background:#e2e8f0;border-radius:6px;margin-top:10px;overflow:hidden}.sbar i{display:block;height:100%;background:#16a34a}
+#adj{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:30}#adj>div{background:#fff;padding:24px;border-radius:14px;max-width:380px;width:90%}
+</style>
+</head>
+<body>
+
+<!-- LOGIN / SIGNUP -->
+<div id="auth">
+ <div class="brand">
+  <div class="logo">🎓</div><h1>EduFee</h1>
+  <p>Smart school fee management. Submit payments, track balances and stay updated, all in one secure place.</p>
+  <ul><li>✔ Secure online fee submission</li><li>✔ Real-time payment status</li><li>✔ Instant notifications &amp; live support chat</li></ul>
+ </div>
+ <div class="panel"><div class="form">
+  <h2 id="aTitle">Welcome back</h2><p class="sub" id="aSub">Sign in to continue to your account</p>
+  <div id="loginBox">
+   <label>Mobile number or email</label><input id="lMob" placeholder="Enter your mobile number or email" autocomplete="username">
+   <label>Password</label><input id="lPass" type="password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+   <button class="main" onclick="login()">Sign In</button>
+  </div>
+  <div id="signBox" class="hide">
+   <div class="grid">
+    <div><label>Your name</label><input id="sName" placeholder="Full name"></div>
+    <div><label>Mobile number</label><input id="sMob" placeholder="03xxxxxxxxx"></div>
+    <div><label>Student name</label><input id="sStu" placeholder="Student's full name"></div>
+    <div><label>Class</label><input id="sCls" placeholder="e.g. Grade 5"></div>
+    <div><label>Monthly fee</label><input id="sFee" type="number" placeholder="Amount"></div>
+    <div><label>Password</label><input id="sPass" type="password" placeholder="Min. 6 characters"></div>
+   </div>
+   <button class="main" onclick="signup()">Create Account</button>
+  </div>
+  <p class="sw" id="aSw">Don't have an account? <a onclick="authTab(0)">Sign up</a></p>
+ </div></div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hide">
+ <header><button id="burger" onclick="toggleSide()">☰</button><b id="pgT">Dashboard</b><div id="slider"></div><div class="usr"><div class="av" id="uAv"></div><span id="uName"></span></div><button class="x" onclick="auth_.signOut()">Logout</button></header>
+ <div id="side"></div>
+ <main id="main"></main>
+</div>
+<div id="modal" class="hide"><div><b id="mText"></b><button onclick="readPop()">OK, Read</button></div></div>
+
+<div id="adj" class="hide"><div><h3 style="margin-top:0">Edit Balance</h3><p id="aInfo" style="color:#64748b;font-size:14px"></p>
+ <select id="aType"><option value="b">Balance (customer still owes)</option><option value="e">Extra (customer paid extra)</option></select>
+ <input id="aAmt" type="number" min="0" placeholder="Amount"><button class="g" onclick="saveAdj()">Save</button> <button class="x" onclick="$('adj').classList.add('hide')">Cancel</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// ====== 1) APNI FIREBASE CONFIG YAHAN PASTE KAREIN ======
+const firebaseConfig={apiKey:"AIzaSyCfLjlvIdJWQMGIY3EHCSxwiRIr8jUik60",authDomain:"edufee-d13a7.firebaseapp.com",projectId:"edufee-d13a7",storageBucket:"edufee-d13a7.firebasestorage.app",messagingSenderId:"883956529002",appId:"1:883956529002:web:8cd85872f934c9b5155713"};
+// ====== 2) Firebase Auth mai ye admin user banayein: admin@edufee.app (apna password) ======
+const ADMIN="admin@edufee.app";
+
+firebase.initializeApp(firebaseConfig);
+const auth_=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>new Date(t).toLocaleString();
+const toEmail=v=>{v=v.trim();return v.includes('@')?v:(v.toLowerCase()==='admin'?ADMIN:v+'@edufee.app')};
+let me=null,uid=null,isAdmin=false,tab='',busy=false,unsub=[];
+let users=[],pays=[],notifs=[],chatUser=null,chatUnsub=null,popQ=[];
+
+function authTab(l){$('loginBox').classList.toggle('hide',!l);$('signBox').classList.toggle('hide',!!l);
+ $('aTitle').textContent=l?'Welcome back':'Create your account';
+ $('aSub').textContent=l?'Sign in to continue to your account':'Your request will be reviewed by the administrator';
+ $('aSw').innerHTML=l?'Don\'t have an account? <a onclick="authTab(0)">Sign up</a>':'Already have an account? <a onclick="authTab(1)">Sign in</a>'}
+
+async function signup(){
+ const d={name:$('sName').value.trim(),mobile:$('sMob').value.trim(),student:$('sStu').value.trim(),cls:$('sCls').value.trim(),fee:+$('sFee').value,status:'pending',time:Date.now()};
+ const p=$('sPass').value;
+ if(!d.name||!d.mobile||!d.student||!d.cls||!d.fee||p.length<6)return alert('Please fill in all fields correctly (password: minimum 6 characters).');
+ try{busy=true;
+  let c;const em=toEmail(d.mobile);
+  try{c=await auth_.createUserWithEmailAndPassword(em,p)}
+  catch(e){if(e.code!=='auth/email-already-in-use')throw e;
+   try{c=await auth_.signInWithEmailAndPassword(em,p)}catch(x){throw new Error('This mobile number is already registered. Please sign in, or use the password you used before.')}
+   if((await db.collection('users').doc(c.user.uid).get()).exists){await auth_.signOut();throw new Error('This mobile number is already registered. Please sign in.')}}
+  await db.collection('users').doc(c.user.uid).set(d);
+  await db.collection('notifications').add({to:'admin',text:'🆕 New signup request: '+d.name,type:'sys',time:Date.now(),readBy:[]});
+  await auth_.signOut();busy=false;
+  alert('Your signup request has been sent. Please wait for admin approval.');authTab(1);
+ }catch(e){busy=false;alert(e.message)}
+}
+async function login(){
+ try{await auth_.signInWithEmailAndPassword(toEmail($('lMob').value),$('lPass').value)}catch(e){alert('Sign in failed. Please check your mobile number/email and password.')}
+}
+
+auth_.onAuthStateChanged(async u=>{
+ if(busy)return;
+ unsub.forEach(f=>f());unsub=[];
+ if(!u){$('app').classList.add('hide');$('auth').classList.remove('hide');return}
+ uid=u.uid;isAdmin=u.email===ADMIN;
+ if(!isAdmin){
+  const s=await db.collection('users').doc(uid).get();me=s.data();
+  if(!me||me.status!=='approved'){alert(me?'Your account status: '+me.status+'. Admin approval is required to sign in.':'This account was removed. Please sign up again.');return auth_.signOut()}
+ }
+ $('auth').classList.add('hide');$('app').classList.remove('hide');
+ buildSide();startListeners();go('dash');
+});
+
+function buildSide(){
+ const items=isAdmin?[['dash','📊 Dashboard'],['reqs','📝 Signup Requests'],['appr','✅ Payment Approval'],['hist','📜 Payment History'],['notif','🔔 Notifications'],['chat','💬 Live Chat']]
+ :[['dash','📊 Dashboard'],['fee','💰 New Fee'],['hist','📜 Payment History'],['prof','👤 Profile Edit'],['notif','🔔 Notifications'],['chat','💬 Live Chat']];
+ $('side').innerHTML='<div class="lg">🎓 EduFee</div>'+items.map(i=>`<a id="n_${i[0]}" onclick="go('${i[0]}')">${i[1]}</a>`).join('');
+ const nm=isAdmin?'Administrator':me.name;$('uName').textContent=nm;$('uAv').textContent=nm[0].toUpperCase();
+ if(innerWidth>900){side.classList.add('open');$('app').classList.add('sb')}
+}
+function toggleSide(){side.classList.toggle('open');$('app').classList.toggle('sb')}
+function go(t){tab=t;if(innerWidth<=900){side.classList.remove('open');$('app').classList.remove('sb')}
+ document.querySelectorAll('#side a').forEach(a=>a.classList.toggle('on',a.id==='n_'+t));
+ $('pgT').textContent=$('n_'+t).textContent.replace(/^\S+\s/,'');render()}
+
+function startListeners(){
+ const col=n=>db.collection(n);
+ if(isAdmin){
+  unsub.push(col('users').onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.time-a.time);render()}));
+  unsub.push(col('payments').onSnapshot(s=>{pays=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.time-a.time);render()}));
+  unsub.push(col('notifications').where('to','==','admin').onSnapshot(onNotifs));
+ }else{
+  unsub.push(col('users').doc(uid).onSnapshot(s=>{if(!s.exists){alert('Your account has been removed by the admin.');auth_.signOut();return}me=s.data();render()}));
+  unsub.push(col('payments').where('uid','==',uid).onSnapshot(s=>{pays=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.time-a.time);render()}));
+  unsub.push(col('notifications').where('to','in',['all',uid]).onSnapshot(onNotifs));
+ }
+}
+
+/* ===== NOTIFICATIONS ===== */
+const dismissed=new Set();
+const md=n=>n.mode||(isAdmin&&n.type==='sys'?'slider':'both');
+function onNotifs(s){
+ const key=isAdmin?'admin':uid;
+ notifs=s.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!(n.readBy||[]).includes(key)).sort((a,b)=>b.time-a.time);
+ // chat notifications auto-read jab chat open ho
+ notifs.filter(n=>n.type==='chat'&&tab==='chat').forEach(n=>markRead(n.id));
+ notifs=notifs.filter(n=>!(n.type==='chat'&&tab==='chat'));
+ const sl=notifs.filter(n=>md(n)!=='popup');
+ $('slider').innerHTML=sl.length?'<span>'+sl.map(n=>'🔔 '+esc(n.text)).join(' &nbsp;&nbsp;•&nbsp;&nbsp; ')+'</span>':'';
+ popQ=notifs.filter(n=>md(n)!=='slider'&&!(n.popSeen||[]).includes(key)&&!dismissed.has(n.id));
+ showPop();if(tab==='notif')render();
+}
+function showPop(){
+ if(!popQ.length){$('modal').classList.add('hide');return}
+ $('mText').textContent=popQ[0].text;$('modal').classList.remove('hide');
+}
+function markRead(id){return db.collection('notifications').doc(id).update({readBy:FV.arrayUnion(isAdmin?'admin':uid)})}
+function readPop(){const n=popQ.shift();$('modal').classList.add('hide');
+ if(!n)return;dismissed.add(n.id);
+ const ref=db.collection('notifications').doc(n.id),k=isAdmin?'admin':uid;
+ // Slider + Pop-up: OK sirf pop-up band kare, slider chalta rahe
+ (n.mode==='both'?ref.update({popSeen:FV.arrayUnion(k)}):ref.update({readBy:FV.arrayUnion(k)}))
+  .catch(e=>alert('Could not save notification status: '+e.message+'\nPlease update the Firestore rules.'));
+ showPop()}
+
+/* ===== RENDER ===== */
+function render(){
+ const m=$('main');if(!uid||!tab)return;
+ if(chatUnsub&&tab!=='chat'){chatUnsub();chatUnsub=null}
+ if(tab==='chat'&&$('msgs'))return; // chat window update live
+ charts.forEach(c=>c.destroy());charts=[];
+ const f={dash:rDash,reqs:rReqs,appr:rAppr,hist:rHist,notif:rNotif,chat:rChat,fee:rFee,prof:rProf}[tab];
+ if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)&&m.contains(document.activeElement))return;
+ m.innerHTML=f();if(tab==='dash')drawCharts();
+ if(tab==='chat')openChat();
+}
+const stt=s=>`<span class="st ${s}">${s}</span>`;
+const paid=()=>pays.filter(p=>p.status==='approved').reduce((a,p)=>a+p.amount,0);
+
+/* ----- Dashboard ----- */
+let charts=[];
+// Har approved payment ek "cycle" hai: payable = fee + pichla balance (extra ho to minus). Balance aage carry hota hai.
+function chainOf(list,fee){
+ const ap=list.filter(p=>p.status==='approved').sort((a,b)=>a.time-b.time);let carry=0;const m={};
+ ap.forEach(p=>{const f=p.feeAt??fee,pay=f+carry,bal=p.balAfter!=null?p.balAfter:pay-p.amount;m[p.id]={pay,bal};carry=bal});
+ return{m,cur:carry,last:ap.length?m[ap[ap.length-1].id]:null,paid:ap.reduce((a,p)=>a+p.amount,0)};
+}
+const prevBal=()=>chainOf(pays,me.fee).cur,payNow=()=>me.fee+prevBal();
+const num=n=>Number(n||0).toLocaleString();
+function stats(){
+ const pend=pays.filter(p=>p.status==='pending');
+ if(isAdmin){const cu=users.filter(u=>u.status==='approved');
+  const out=cu.reduce((a,u)=>a+Math.max(chainOf(pays.filter(p=>p.uid===u.id),u.fee).cur,0),0);
+  return{col:pays.filter(p=>p.status==='approved').reduce((a,p)=>a+p.amount,0),cu,out,pend}}
+ const ch=chainOf(pays,me.fee),L=ch.last||{pay:me.fee,bal:me.fee};
+ return{col:ch.paid,cur:ch.cur,next:me.fee+ch.cur,P:L.pay,bal:L.bal,pend};
+}
+function months(list){const o=[],n=new Date();for(let i=5;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);o.push({k:d.getFullYear()+'-'+d.getMonth(),l:d.toLocaleString('en',{month:'short'}),v:0})}
+ list.forEach(p=>{const d=new Date(p.time),x=o.find(m=>m.k===d.getFullYear()+'-'+d.getMonth());if(x)x.v+=p.amount});return o}
+const kpi=(i,c,l,v,sub='')=>`<div class="kpi"><div class="ic" style="background:${c}1f;color:${c}">${i}</div><div><div class="kl">${l}</div><div class="kv">${v}</div>${sub?`<small>${sub}</small>`:''}</div></div>`;
+const cv=(id,t)=>`<div class="card"><h4>${t}</h4><div class="cw"><canvas id="${id}"></canvas></div></div>`;
+const recent=()=>pays.length?`<div style="overflow:auto"><table><tr><th>Date</th>${isAdmin?'<th>Customer</th>':''}<th>Student</th><th>Amount</th><th>Status</th></tr>${pays.slice(0,5).map(p=>`<tr><td>${fmt(p.time)}</td>${isAdmin?`<td>${esc(p.name)}</td>`:''}<td>${esc(p.student)}</td><td>${num(p.amount)}</td><td>${stt(p.status)}</td></tr>`).join('')}</table></div>`:'<p style="color:#94a3b8">No payments yet.</p>';
+function rDash(){
+ const t=stats(),pa=num(t.pend.reduce((a,p)=>a+p.amount,0))+' awaiting approval';
+ if(isAdmin)return `<div class="hero"><h2>Welcome back, Administrator 👋</h2><p>Here is an overview of fee collection and customer activity.</p></div>
+ <div class="kpis">${kpi('👥','#2563eb','Active Customers',t.cu.length,users.filter(u=>u.status==='pending').length+' signup requests pending')}${kpi('💵','#16a34a','Total Collected',num(t.col))}${kpi('⏳','#f59e0b','Pending Payments',t.pend.length,pa)}${kpi('📉','#dc2626','Outstanding Balance',num(t.out),'carried-forward balances')}</div>
+ <div class="card"><h4>Student Balances</h4><div class="cards">${t.cu.slice().sort((a,b)=>chainOf(pays.filter(p=>p.uid===b.id),b.fee).cur-chainOf(pays.filter(p=>p.uid===a.id),a.fee).cur).map(balCard).join('')||'<p style="color:#94a3b8">No approved customers yet.</p>'}</div></div>
+ <div class="charts" style="margin-top:14px">${cv('c1','Monthly Collection')}${cv('c2','Collection Progress')}${cv('c3','Payment Status')}${cv('c4','Cash vs Bank')}</div>
+ <div class="card" style="margin-top:14px"><h4>Recent Payments</h4>${recent()}</div>`;
+ return `<div class="hero"><h2>Hello, ${esc(me.name)} 👋</h2><p>Student: <b>${esc(me.student)}</b> · Class: <b>${esc(me.cls)}</b></p>
+ <p style="margin-top:10px">Next fee payable: <b>${num(t.next)}</b> (${num(me.fee)} fee ${t.cur>=0?'+ '+num(t.cur)+' balance':'− '+num(-t.cur)+' extra'})</p></div>
+ <div class="kpis">${kpi('🎯','#2563eb','Monthly Fee',num(me.fee))}${kpi('✅','#16a34a','Total Paid',num(t.col))}${t.cur<0?kpi('➕','#16a34a','Extra Paid','<span class="ext">'+num(-t.cur)+'</span>'):kpi('⚖️','#dc2626','Balance','<span class="bal">'+num(t.cur)+'</span>')}${kpi('⏳','#f59e0b','Pending Approval',t.pend.length,pa)}</div>
+ <div class="charts">${cv('c1','Payments by Month')}${cv('c2','Last Payment: Paid vs Balance')}${cv('c3','Payment Status')}</div>
+ <div class="card" style="margin-top:14px"><h4>Recent Payments</h4>${recent()}</div>`;
+}
+function mk(id,type,labels,data,colors,label=''){
+ const c=$(id);if(!c||!window.Chart)return;const d=type==='doughnut';
+ charts.push(new Chart(c,{type,data:{labels,datasets:[{label,data,backgroundColor:colors,borderColor:d?'#fff':colors[0],borderWidth:d?3:2,borderRadius:type==='bar'?8:0,tension:.4,fill:type==='line'}]},
+ options:{responsive:true,maintainAspectRatio:false,cutout:d?'68%':undefined,plugins:{legend:{display:d,position:'bottom'}},scales:d?{}:{y:{beginAtZero:true,grid:{color:'#eef2f7'}},x:{grid:{display:false}}}}}));
+}
+function drawCharts(){
+ const t=stats(),ap=pays.filter(p=>p.status==='approved'),m=months(ap),B='#2563eb',G='#16a34a',O='#f59e0b',Rr='#dc2626',P='#7c3aed';
+ const sc=['pending','approved','rejected','incorrect'].map(k=>pays.filter(p=>p.status===k).length);
+ mk('c1','bar',m.map(x=>x.l),m.map(x=>x.v),[B,B,B,B,B,B],'Collected');
+ if(isAdmin){
+  mk('c2','doughnut',['Collected','Outstanding'],[t.col,t.out],[G,Rr]);
+  mk('c3','doughnut',['Pending','Approved','Rejected','Incorrect'],sc,[O,G,Rr,P]);
+  mk('c4','doughnut',['Cash','Bank'],['Cash','Bank'].map(k=>ap.filter(p=>p.method===k).reduce((a,p)=>a+p.amount,0)),[B,'#06b6d4']);
+ }else{
+  mk('c2','doughnut',t.bal>0?['Paid','Balance']:['Paid','Extra'],t.bal>0?[t.P-t.bal,t.bal]:[t.P,-t.bal],t.bal>0?[G,Rr]:[G,'#86efac']);
+  mk('c3','doughnut',['Pending','Approved','Rejected','Incorrect'],sc,[O,G,Rr,P]);
+ }
+}
+
+/* ----- Customer: New Fee ----- */
+function rFee(){
+ const pn=pays.find(p=>p.status==='pending');
+ if(pn)return `<div class="card"><h3>Add New Fee</h3><p>⏳ Your payment of <b>${num(pn.amount)}</b> (${fmt(pn.time)}) is waiting for admin approval.</p><p style="color:#64748b">You can add a new fee after the admin approves (or rejects) this payment.</p><button onclick="go('hist')">View Payment History</button></div>`;
+ return `<div class="card"><h3>Add New Fee</h3>
+ <p>Student: <b>${esc(me.student)}</b> | Class: <b>${esc(me.cls)}</b></p>
+ <p>Monthly Fee: <b>${num(me.fee)}</b><br>${prevBal()>=0?'Previous balance (added)':'Previous extra (deducted)'}: <b>${balNum(prevBal())}</b><br>Total payable: <b>${num(payNow())}</b></p>
+ <input id="fAmt" type="number" placeholder="Amount paid" oninput="calc()">
+ <p>Balance: <span class="bal" id="fBal">${Math.max(payNow(),0)}</span> &nbsp; Extra: <span class="ext" id="fExt">${Math.max(-payNow(),0)}</span></p>
+ <select id="fMeth" onchange="$('bk').classList.toggle('hide',this.value!=='Bank')"><option>Cash</option><option>Bank</option></select>
+ <div id="bk" class="hide"><input id="fBank" placeholder="Bank name"><input id="fTxn" placeholder="Transaction ID"></div>
+ <button onclick="submitFee()">Submit</button></div>`;
+}
+function calc(){const r=payNow()-(+$('fAmt').value||0);$('fBal').textContent=Math.max(r,0);$('fExt').textContent=Math.max(-r,0)}
+async function submitFee(){
+ if(pays.some(p=>p.status==='pending'))return alert('Your previous payment is still waiting for admin approval.');
+ const a=+$('fAmt').value,meth=$('fMeth').value,bank=$('fBank')?.value.trim(),txn=$('fTxn')?.value.trim();
+ if(a<=0)return alert('Please enter the amount.');
+ if(meth==='Bank'&&(!bank||!txn))return alert('Please enter the bank name and transaction ID.');
+ await db.collection('payments').add({uid,name:me.name,student:me.student,cls:me.cls,amount:a,method:meth,bank:meth==='Bank'?bank:'',txn:meth==='Bank'?txn:'',status:'pending',time:Date.now()});
+ await db.collection('notifications').add({to:'admin',text:`💰 New payment request from ${me.name}: ${a}`,type:'sys',time:Date.now(),readBy:[]});
+ alert('Your payment request has been sent to the admin.');go('hist');
+}
+
+/* ----- History (customer + admin) ----- */
+const balNum=b=>b>=0?`<span class="bal">${num(b)}</span>`:`<span class="ext">${num(-b)}</span>`;
+const balCard=u=>{const ch=chainOf(pays.filter(p=>p.uid===u.id),u.fee);
+ return `<div class="pcard sc" data-s="${esc((u.name+u.student+u.cls+u.mobile).toLowerCase())}"><div class="top"><b>${esc(u.student)}</b><small>Class ${esc(u.cls)}</small></div><small>${esc(u.name)} · ${esc(u.mobile)}</small>
+ <div class="rw" style="margin-top:8px"><span>Monthly Fee</span><b>${num(u.fee)}</b></div><div class="rw"><span>Paid (approved)</span><b>${num(ch.paid)}</b></div><div class="rw"><span>${ch.cur>=0?'Balance':'Extra'}</span><b>${balNum(ch.cur)}</b></div><div class="rw"><span>Next payable</span><b>${num(u.fee+ch.cur)}</b></div></div>`};
+const payInfo=p=>{
+ const u0=isAdmin?users.find(x=>x.id===p.uid):me,fee=u0?u0.fee:0,mine=pays.filter(q=>q.uid===p.uid),ch=chainOf(mine,fee);
+ if(p.status==='approved')return ch.m[p.id];
+ const b=mine.filter(q=>q.status==='approved'&&q.time<p.time).sort((x,y)=>x.time-y.time).pop(),pay=fee+(b?ch.m[b.id].bal:0);
+ return{pay,bal:pay-p.amount};
+};
+const payCard=p=>{const s=payInfo(p),ok=p.status==='approved',show=ok||p.status==='pending',adm=isAdmin&&ok;
+ return `<div class="pcard" ${adm?`onclick="editBal('${p.id}')" style="cursor:pointer"`:''}><div class="top"><b>${num(p.amount)}</b>${stt(p.status)}</div>
+ <div class="rw"><span>Student</span><b>${esc(p.student)} (${esc(p.cls)})</b></div>${isAdmin?`<div class="rw"><span>Customer</span><b>${esc(p.name)}</b></div>`:''}
+ <div class="rw"><span>Method</span><b>${p.method}</b></div>${p.bank?`<div class="rw"><span>Bank / TXN</span><b>${esc(p.bank)} / ${esc(p.txn)}</b></div>`:''}
+ <div class="rw"><span>Payable (fee + previous)</span><b>${num(s.pay)}</b></div>
+ ${show?`<div class="rw"><span>${s.bal>=0?'Balance':'Extra'} ${ok?'after this payment':'if approved'}</span><b>${balNum(s.bal)}</b></div>`:''}
+ ${p.adjusted?'<small style="color:#7c3aed">✎ Balance updated by admin</small><br>':''}${adm?'<small style="color:#2563eb">Tap card to edit balance</small><br>':''}
+ <small style="color:#94a3b8">${fmt(p.time)}</small></div>`};
+let adjId=null;
+function editBal(id){const p=pays.find(x=>x.id===id);if(!p)return;adjId=id;const s=payInfo(p);
+ $('aInfo').textContent=`${p.name} · ${p.student} · Payment ${num(p.amount)}`;
+ $('aType').value=s.bal>=0?'b':'e';$('aAmt').value=Math.abs(s.bal);$('adj').classList.remove('hide')}
+async function saveAdj(){const p=pays.find(x=>x.id===adjId),a=+$('aAmt').value;
+ if(!p||isNaN(a)||a<0)return alert('Enter a valid amount.');
+ const b=$('aType').value==='b'?a:-a;
+ await db.collection('payments').doc(adjId).update({balAfter:b,adjusted:true,adjTime:Date.now()});
+ await notify(p.uid,`Admin updated your balance after payment of ${num(p.amount)}: ${b>=0?'Balance':'Extra'} ${num(Math.abs(b))}`,'admin','both');
+ $('adj').classList.add('hide');alert('Balance saved. The customer has been notified.')}
+function filt(){const q=$('q').value.toLowerCase();document.querySelectorAll('.sc').forEach(c=>c.classList.toggle('hide',!c.dataset.s.includes(q)))}
+let histSel='';
+function rHist(){
+ const card=(l)=>l.map(payCard).join('')||'<p>No payments yet.</p>';
+ if(!isAdmin)return `<div class="card"><h3>Payment History</h3><div class="cards">${card(pays)}</div></div>`;
+ const cu=users.filter(u=>u.status==='approved').sort((x,y)=>x.student.localeCompare(y.student));
+ const sel=cu.find(u=>u.id===histSel),list=sel?pays.filter(p=>p.uid===sel.id):pays;
+ let h=`<div class="card"><h3>Filter by Student</h3><select id="hSel" onchange="histSel=this.value;this.blur();render()"><option value="">All students</option>${cu.map(u=>`<option value="${u.id}" ${sel&&u.id===sel.id?'selected':''}>${esc(u.student)} (${esc(u.cls)}) – ${esc(u.name)}</option>`).join('')}</select>`;
+ if(sel){
+  const ch=chainOf(list,sel.fee),pend=list.filter(p=>p.status==='pending');
+  h+=`<p style="margin:6px 0 0">Student: <b>${esc(sel.student)}</b> · Class: <b>${esc(sel.cls)}</b> · Customer: <b>${esc(sel.name)}</b> · ${esc(sel.mobile)}</p>
+  <div class="kpis" style="margin:14px 0 0">${kpi('🎯','#2563eb','Monthly Fee',num(sel.fee))}${kpi('✅','#16a34a','Total Paid',num(ch.paid))}${ch.cur<0?kpi('➕','#16a34a','Extra Paid','<span class="ext">'+num(-ch.cur)+'</span>'):kpi('⚖️','#dc2626','Balance','<span class="bal">'+num(ch.cur)+'</span>')}${kpi('➡️','#7c3aed','Next Payable',num(sel.fee+ch.cur))}${kpi('⏳','#f59e0b','Pending Approval',pend.length,num(pend.reduce((a,p)=>a+p.amount,0))+' awaiting')}</div>`;
+ }else h+=`<input id="q" placeholder="Or search by student, customer, class or mobile..." oninput="filt()"><div class="cards">${cu.map(balCard).join('')||'<p>No approved customers yet.</p>'}</div>`;
+ return h+`</div><div class="card"><h3>Payment History${sel?' – '+esc(sel.student):''}</h3><div class="cards">${card(list)}</div></div>`;
+}
+
+/* ----- Profile ----- */
+function rProf(){
+ return `<div class="card"><h3>Profile Edit</h3>
+ <label>Name</label><input id="pN" value="${esc(me.name)}">
+ <label>Student name</label><input id="pS" value="${esc(me.student)}">
+ <p>Mobile: <b>${esc(me.mobile)}</b> | Class: <b>${esc(me.cls)}</b> | Monthly Fee: <b>${num(me.fee)}</b><br><small>(Class and fee can only be changed by the admin)</small></p>
+ <button onclick="saveProf()">Save</button></div>`;
+}
+async function saveProf(){await db.collection('users').doc(uid).update({name:$('pN').value,student:$('pS').value});alert('Profile updated successfully.')}
+
+/* ----- Admin: Signup requests + fee edit ----- */
+function rReqs(){
+ return `<div class="card"><h3>Signup Requests / Customers</h3>`+users.map(u=>`<div class="card" style="border:1px solid #e2e8f0">
+ <b>${esc(u.name)}</b> ${stt(u.status)}<br>Mobile: ${esc(u.mobile)} | Student: ${esc(u.student)} | Class: ${esc(u.cls)}<br>
+ Class: <input id="ac_${u.id}" value="${esc(u.cls)}" style="width:110px;display:inline">
+ Monthly Fee: <input type="number" id="af_${u.id}" value="${u.fee}" style="width:110px;display:inline"> <button class="o" onclick="setFee('${u.id}')">Update Fee/Class</button><br><br>
+ <button class="g" onclick="setSt('${u.id}','approved')">Approve</button> <button class="r" onclick="setSt('${u.id}','rejected')">Reject</button> <button class="x" onclick="setSt('${u.id}','incorrect')">Incorrect</button> <button class="r" style="background:#7f1d1d" onclick="delUser('${u.id}')">Delete</button></div>`).join('')+`</div>`;
+}
+async function delUser(id){
+ const u=users.find(x=>x.id===id);
+ if(!confirm(`Delete ${u.name} (${u.student}) and all their payment records? This cannot be undone.`))return;
+ const ps=await db.collection('payments').where('uid','==',id).get(),b=db.batch();
+ ps.docs.forEach(d=>b.delete(d.ref));b.delete(db.collection('users').doc(id));await b.commit();
+ alert('Customer deleted. They can sign up again with a new request.');
+}
+const setSt=(id,s)=>db.collection('users').doc(id).update({status:s});
+async function setFee(id){
+ const v=+$('af_'+id).value,c=$('ac_'+id).value.trim();await db.collection('users').doc(id).update({fee:v,cls:c});
+ await notify(id,`Admin updated your details: Class ${c}, Monthly Fee ${v}`);alert('Fee/Class updated.');
+}
+const notify=(to,text,type='sys',mode)=>db.collection('notifications').add({to,text,type,time:Date.now(),readBy:[],...(mode?{mode}:{})});
+
+/* ----- Admin: Payment approval ----- */
+function rAppr(){
+ const l=pays.filter(p=>p.status==='pending');
+ return `<div class="card"><h3>Payment Approval</h3>${l.length?'':'<p>No pending requests.</p>'}`+l.map(p=>`<div class="card" style="border:1px solid #e2e8f0">
+ <b>${esc(p.name)}</b> — Student: ${esc(p.student)} (${esc(p.cls)})<br>Amount: <b>${p.amount}</b> | ${p.method}${p.bank?` | Bank: ${esc(p.bank)} | TXN: ${esc(p.txn)}`:''}<br><small>${fmt(p.time)}</small><br><br>
+ <button class="g" onclick="setPay('${p.id}','approved')">Approve</button> <button class="r" onclick="setPay('${p.id}','rejected')">Reject</button> <button class="x" onclick="setPay('${p.id}','incorrect')">Incorrect</button></div>`).join('')+`</div>`;
+}
+async function setPay(id,s){
+ const p=pays.find(x=>x.id===id);const u=users.find(x=>x.id===p.uid);
+ await db.collection('payments').doc(id).update(s==='approved'?{status:s,feeAt:u?u.fee:null}:{status:s});
+ await notify(p.uid,`Your payment request of ${p.amount} was ${s.toUpperCase()}`);
+}
+
+/* ----- Notifications ----- */
+function rNotif(){
+ let h='';
+ if(isAdmin)h=`<div class="card"><h3>Send Notification</h3>
+ <label>Send to</label><select id="nTo"><option value="all">All Customers</option>${users.filter(u=>u.status==='approved').map(u=>`<option value="${u.id}">${esc(u.name)} (${esc(u.student)})</option>`).join('')}</select>
+ <label>Show as</label><select id="nMode"><option value="slider">Top slider (header)</option><option value="popup">Pop-up (center)</option><option value="both">Slider + Pop-up</option></select>
+ <textarea id="nTxt" rows="3" placeholder="Write your notification..."></textarea><button onclick="sendNotif()">Send</button></div>`;
+ return h+`<div class="card"><h3>Unread Notifications</h3>${notifs.length?'':'<p>No new notifications.</p>'}`+
+ notifs.map(n=>`<p><b>${esc(n.text)}</b><br><small>${fmt(n.time)}</small> <button class="x" onclick="markRead('${n.id}')">Read</button></p>`).join('')+`</div>`;
+}
+async function sendNotif(){const t=$('nTxt').value.trim();if(!t)return;await notify($('nTo').value,t,'admin',$('nMode').value);$('nTxt').value='';alert('Notification sent.')}
+
+/* ----- Live Chat ----- */
+function rChat(){
+ let h='<div class="card"><h3>Live Chat</h3>';
+ if(isAdmin)h+=`<select id="cSel" onchange="chatUser=this.value;openChat()"><option value="">-- Select a customer --</option>${users.filter(u=>u.status==='approved').map(u=>`<option value="${u.id}" ${u.id===chatUser?'selected':''}>${esc(u.name)} (${esc(u.student)})</option>`).join('')}</select>`;
+ return h+`<div id="msgs"></div><div style="display:flex;gap:6px"><input id="cTxt" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">Send</button></div></div>`;
+}
+function openChat(){
+ if(chatUnsub){chatUnsub();chatUnsub=null}
+ const cu=isAdmin?chatUser:uid;if(!cu){$('msgs').innerHTML='<p>Select a customer to start chatting.</p>';return}
+ chatUnsub=db.collection('chats').doc(cu).collection('msgs').orderBy('time').onSnapshot(s=>{
+  const b=$('msgs');if(!b)return;
+  b.innerHTML=s.docs.map(d=>{const m=d.data();const mine=isAdmin?m.from==='admin':m.from==='user';return `<div class="clr"><div class="m ${mine?'me':''}">${esc(m.text)}</div></div>`}).join('');
+  b.scrollTop=b.scrollHeight;
+ });
+}
+async function sendChat(){
+ const t=$('cTxt').value.trim();const cu=isAdmin?chatUser:uid;if(!t||!cu)return;$('cTxt').value='';
+ await db.collection('chats').doc(cu).collection('msgs').add({from:isAdmin?'admin':'user',text:t,time:Date.now()});
+ // offline user ko login par notification milegi
+ await notify(isAdmin?cu:'admin','💬 New message'+(isAdmin?' from Admin':' from '+me.name),'chat');
+}
+</script>
+</body>
+</html>
